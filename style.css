@@ -1,0 +1,152 @@
+@import url("https://fonts.googleapis.com/css2?family=Boldonse&family=Instrument+Serif:ital@0;1&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  font-family: "Instrument Serif";
+}
+
+:root {
+  --card-grid-gap: 5vw;
+  --card-grid-space: calc((100% - 12 * var(--card-grid-gap)) / 12);
+}
+
+.container {
+  width: 100%;
+  height: 500vh;
+}
+
+.hero,
+.cards,
+.footer {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-color: #fffafa;
+}
+
+.hero,
+.footer {
+  h1 {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: #303030;
+    text-align: center;
+    font-size: 5vw;
+    font-weight: lighter;
+    line-height: 100%;
+  }
+}
+
+@media screen and (max-height: 1244px) {
+  .cards {
+    .card {
+      height: 607px;
+    }
+  }
+}
+.cards {
+  .card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(var(--card-grid-space) * 3 + var(--card-grid-gap) * 2);
+    height: 850px;
+    perspective: 1000px;
+    aspect-ratio: 314 / 438;
+    .card-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      /* animation: floating 3s infinite ease-in-out; */
+      .flip-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        .flip-card-front,
+        .flip-card-back {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          backface-visibility: hidden;
+          border-radius: 0.8em;
+          overflow: hidden;
+        }
+        .flip-card-front {
+          background-repeat: no-repeat;
+          background-size: cover;
+          background-color: #243673;
+          padding: 0.5rem;
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0.4em;
+          }
+        }
+        .flip-card-back {
+          padding: 0.5rem;
+          background-color: #6eb64a;
+          transform: rotateY(180deg);
+          box-shadow: 0px 8px 10px 0px rgba(0, 0, 0, 0.3);
+          .content {
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            border-radius: 0.4em;
+          }
+        }
+      }
+    }
+  }
+}
+
+/*A REMPLACER PAR FUNCTION*/
+#card-1 .card-wrapper {
+  animation-delay: 0s;
+}
+
+#card-2 .card-wrapper {
+  animation-delay: 0.2s;
+}
+
+#card-3 .card-wrapper {
+  animation-delay: 0.4s;
+}
+
+#card-4 .card-wrapper {
+  animation-delay: 0.6s;
+}
+
+#card-5 .card-wrapper {
+  animation-delay: 0.8s;
+}
+
+#card-6 .card-wrapper {
+  animation-delay: 1s;
+}
+
+@keyframes floating {
+  0% {
+    transform: translate(-50%, -50%);
+  }
+  50% {
+    transform: translate(-50%, -55%);
+  }
+  100% {
+    transform: translate(-50%, -50%);
+  }
+}

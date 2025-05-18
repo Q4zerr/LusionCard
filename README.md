@@ -20,11 +20,13 @@
 
 ## 📁 Project Structure
 
+```
 /lusioncard/
 │
 ├── index.html # Main HTML structure
 ├── styles.css # Styling for layout and 3D card visuals
 ├── script.js # Main animation logic with GSAP, ScrollTrigger & Lenis
+```
 
 ## 🚀 Getting Started
 

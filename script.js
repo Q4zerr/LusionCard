@@ -25,16 +25,15 @@ window.addEventListener("DOMContentLoaded", () => {
   const cardsContainer = container.querySelector(".cards");
   const cardRefs = cardsContainer.querySelectorAll(".card");
   const heightRatio = 562.406 / 953; // ≈ 59% size
-
   const cardHeight = window.innerHeight * heightRatio;
+  const totalScrollHeight = window.innerHeight * 3;
+  const positions = [-7, 16, 38.67, 61.33, 84, 107];
+  // const rotations = [-22.5, -15, -7.5, 7.5, 15, 22.5];
+  const rotations = [-11.25, -7.5, -3.75, 3.75, 7.5, 11.25];
 
   cardRefs.forEach((card) => {
     card.style.height = `${cardHeight}px`;
   });
-
-  const totalScrollHeight = window.innerHeight * 3;
-  const positions = [-7, 16, 38.67, 61.33, 84, 107];
-  const rotations = [-22.5, -15, -7.5, 7.5, 15, 22.5];
 
   // Pin cards section
   ScrollTrigger.create({
@@ -45,11 +44,44 @@ window.addEventListener("DOMContentLoaded", () => {
     pinSpacing: true,
   });
 
+  // Rotate cards
+  cardRefs.forEach((card, i) => {
+    let floatingOn = false;
+
+    ScrollTrigger.create({
+      trigger: cardsContainer,
+      start: "top center",
+      end: "40% center",
+      scrub: true,
+      onUpdate: (self) => {
+        // Rotate
+        gsap.to(card, {
+          rotation: rotations[i] * self.progress,
+          ease: "none",
+        });
+
+        // When self.progress reached 0.8 (80%) = 20% before end
+        // Then launch Floating animation
+        if (!floatingOn && self.progress >= 0.8) {
+          card.querySelector(".card-wrapper").classList.add("floating");
+          floatingOn = true;
+        }
+        // Else if we backward under 80%
+        // Then removed Floating animation
+        if (floatingOn && self.progress < 0.8) {
+          card.querySelector(".card-wrapper").classList.remove("floating");
+          floatingOn = false;
+        }
+      },
+      markers: true,
+    });
+  });
+
   // Spread cards
   cardRefs.forEach((card, index) => {
     gsap.to(card, {
       left: `${positions[index]}%`,
-      rotation: `${rotations[index]}`,
+      // rotation: `${rotations[index]}`,
       ease: "none",
       scrollTrigger: {
         trigger: cardsContainer,

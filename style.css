@@ -63,6 +63,9 @@ body {
     height: 850px;
     perspective: 1000px;
     aspect-ratio: 314 / 438;
+    .card-wrapper.floating {
+      animation: floating 3s infinite ease-in-out;
+    }
     .card-wrapper {
       position: absolute;
       top: 50%;
@@ -70,7 +73,6 @@ body {
       transform: translate(-50%, -50%);
       width: 100%;
       height: 100%;
-      /* animation: floating 3s infinite ease-in-out; */
       .flip-card-inner {
         position: relative;
         width: 100%;

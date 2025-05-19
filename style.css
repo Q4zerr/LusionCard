@@ -10,11 +10,7 @@ html,
 body {
   width: 100%;
   font-family: "Instrument Serif";
-}
-
-:root {
-  --card-grid-gap: 5vw;
-  --card-grid-space: calc((100% - 12 * var(--card-grid-gap)) / 12);
+  background-color: #fffafa;
 }
 
 .container {
@@ -23,16 +19,13 @@ body {
 }
 
 .hero,
-.cards,
-.footer {
+.cards {
   position: relative;
   width: 100%;
   height: 100vh;
-  background-color: #fffafa;
 }
 
-.hero,
-.footer {
+.hero {
   h1 {
     position: absolute;
     left: 50%;
@@ -59,10 +52,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: calc(var(--card-grid-space) * 3 + var(--card-grid-gap) * 2);
-    height: 850px;
     perspective: 1000px;
-    aspect-ratio: 314 / 438;
     .card-wrapper.floating {
       animation: floating 3s infinite ease-in-out;
     }
@@ -84,31 +74,32 @@ body {
           width: 100%;
           height: 100%;
           backface-visibility: hidden;
-          border-radius: 0.8em;
+          /* border-radius: 0.8em; */
           overflow: hidden;
         }
         .flip-card-front {
           background-repeat: no-repeat;
           background-size: cover;
-          background-color: #243673;
-          padding: 0.5rem;
+          /* background-color: #243673; */
+          /* padding: 0.5rem; */
+          box-shadow: 0px 8px 10px 0px rgba(0, 0, 0, 0.3);
           img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 0.4em;
+            /* border-radius: 0.4em; */
           }
         }
         .flip-card-back {
-          padding: 0.5rem;
-          background-color: #6eb64a;
+          /* padding: 0.5rem;
+          background-color: #6eb64a; */
           transform: rotateY(180deg);
           box-shadow: 0px 8px 10px 0px rgba(0, 0, 0, 0.3);
           .content {
             width: 100%;
             height: 100%;
-            background-color: #fff;
-            border-radius: 0.4em;
+            background-color: #f9f9;
+            /* border-radius: 0.4em; */
           }
         }
       }
@@ -116,7 +107,7 @@ body {
   }
 }
 
-/*A REMPLACER PAR FUNCTION*/
+/*NEED TO REPLACE BY A FUNCTION WHICH INCREASE 0.2 FOR EACH ENTITY*/
 #card-1 .card-wrapper {
   animation-delay: 0s;
 }
@@ -139,6 +130,30 @@ body {
 
 #card-6 .card-wrapper {
   animation-delay: 1s;
+}
+
+#card-7 .card-wrapper {
+  animation-delay: 1.2s;
+}
+
+#card-8 .card-wrapper {
+  animation-delay: 1.4s;
+}
+
+#card-9 .card-wrapper {
+  animation-delay: 1.6s;
+}
+
+#card-10 .card-wrapper {
+  animation-delay: 1.8s;
+}
+
+#card-11 .card-wrapper {
+  animation-delay: 2s;
+}
+
+#card-12 .card-wrapper {
+  animation-delay: 2.2s;
 }
 
 @keyframes floating {

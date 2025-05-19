@@ -24,24 +24,36 @@ window.addEventListener("DOMContentLoaded", () => {
   const container = document.querySelector(".container");
   const cardsContainer = container.querySelector(".cards");
   const cardRefs = cardsContainer.querySelectorAll(".card");
+
   const heightRatio = 562.406 / 953; // ≈ 59% size
-  const cardHeight = window.innerHeight * heightRatio;
+  // const aspectRatio = 415.91 / 557.685;
+  const aspectRatio = 395.91 / 557.685;
+
   const totalScrollHeight = window.innerHeight * 3;
   const positions = [-7, 16, 38.67, 61.33, 84, 107];
   // const rotations = [-22.5, -15, -7.5, 7.5, 15, 22.5];
   const rotations = [-11.25, -7.5, -3.75, 3.75, 7.5, 11.25];
 
-  cardRefs.forEach((card) => {
-    card.style.height = `${cardHeight}px`;
-  });
+  function setCardSize() {
+    const h = window.innerHeight * heightRatio;
+    const w = h * aspectRatio;
+    cardsContainer.querySelectorAll(".card").forEach((card) => {
+      card.style.height = `${h}px`;
+      card.style.width = `${w}px`;
+    });
+  }
+
+  setCardSize();
+  window.addEventListener("resize", setCardSize);
 
   // Pin cards section
-  ScrollTrigger.create({
+  const pinGlobal = ScrollTrigger.create({
     trigger: cardsContainer,
     start: "top top",
-    end: `+=${totalScrollHeight}`,
+    end: `+=${totalScrollHeight} bottom`,
     pin: true,
     pinSpacing: true,
+    // markers: { startColor: "violet", endColor: "black" },
   });
 
   // Rotate cards
@@ -73,7 +85,6 @@ window.addEventListener("DOMContentLoaded", () => {
           floatingOn = false;
         }
       },
-      markers: true,
     });
   });
 
@@ -86,7 +97,7 @@ window.addEventListener("DOMContentLoaded", () => {
       scrollTrigger: {
         trigger: cardsContainer,
         start: "top top",
-        end: () => `+=${window.innerHeight}`,
+        end: () => `+=${window.innerHeight / 2}`,
         scrub: 0.5,
         id: `spread-${index}`,
       },
@@ -135,5 +146,93 @@ window.addEventListener("DOMContentLoaded", () => {
         }
       },
     });
+  });
+
+  // Init horizontal scroll after flip cards
+  let horizontalInitialized = false;
+  let maxScrollX = cardsContainer.scrollWidth - window.innerWidth;
+  let onScrollCallback;
+
+  ScrollTrigger.create({
+    trigger: cardsContainer,
+    start: () => totalScrollHeight,
+    // end: () => `+=${cardsContainer.scrollWidth * 2}`,
+    end: () => `+=${totalScrollHeight + maxScrollX}`,
+    pin: true,
+    pinSpacing: true,
+    onRefresh(self) {
+      // Recalculate maxScrollX on resize
+      maxScrollX = cardsContainer.scrollWidth - window.innerWidth;
+      self.end = totalScrollHeight + maxScrollX;
+    },
+    onEnter: (self) => {
+      if (horizontalInitialized) return;
+      horizontalInitialized = true;
+
+      // Reset & put cards right on rotate
+      cardsContainer.querySelectorAll(".card").forEach((card) => {
+        gsap.set(card, { rotation: 0 });
+        // Show only back face
+        const back = card.querySelector(".flip-card-back");
+        if (back) gsap.set(back, { rotateY: 0 });
+        const front = card.querySelector(".flip-card-front");
+        if (front) gsap.set(front, { rotateY: -180 });
+      });
+
+      // Positionning duplicate cards
+      const shiftPerCard = positions[1] - positions[0];
+      const groupShift = shiftPerCard * positions.length;
+      const baseCount = cardRefs.length;
+
+      // Duplicate for seamless loop
+      cardRefs.forEach((card, i) => {
+        const clone = card.cloneNode(true);
+
+        clone.id = `card-${baseCount + i + 1}`;
+
+        clone.style.left = `${positions[i] + groupShift - 1}%`;
+        clone.style.transform = "translate(0.047px, 0.164px)";
+
+        // Reset rotation
+        gsap.set(clone, { rotation: 0 });
+        // Show only back face
+        const backClone = clone.querySelector(".flip-card-back");
+        const frontClone = clone.querySelector(".flip-card-front");
+        if (backClone) gsap.set(backClone, { rotateY: 0 });
+        if (frontClone) gsap.set(frontClone, { rotateY: -180 });
+
+        cardsContainer.appendChild(clone);
+      });
+
+      // Recalculate maxScrollX after duplicate
+      maxScrollX = cardsContainer.scrollWidth - window.innerWidth;
+      self.end = totalScrollHeight + maxScrollX;
+
+      // Lenis listener to pilote X
+      onScrollCallback = ({ scroll }) => {
+        if (scroll < totalScrollHeight) return;
+        const delta = scroll - totalScrollHeight;
+        const rawX = -delta;
+
+        const x = gsap.utils.clamp(-maxScrollX, 0, rawX);
+        gsap.set(cardsContainer, { x });
+      };
+      lenis.on("scroll", onScrollCallback);
+    },
+    onLeaveBack: () => {
+      // Remove cloned cards
+      const allCards = cardsContainer.querySelectorAll(".card");
+      allCards.forEach((card, idx) => {
+        if (idx >= cardRefs.length) cardsContainer.removeChild(card);
+      });
+
+      // Deactivate listener & reset
+      lenis.off("scroll", onScrollCallback);
+      gsap.set(cardsContainer, { x: 0 });
+
+      horizontalInitialized = false;
+      wrapWidth = cardsContainer.scrollWidth / 2;
+    },
+    // markers: { startColor: "orange", endColor: "cyan", fontSize: "20px" },
   });
 });

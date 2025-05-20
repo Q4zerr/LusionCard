@@ -18,6 +18,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
   requestAnimationFrame(raf);
 
+  const mm = gsap.matchMedia();
+
   /**
    * CARD ANIMATION
    */
@@ -25,26 +27,65 @@ window.addEventListener("DOMContentLoaded", () => {
   const cardsContainer = container.querySelector(".cards");
   const cardRefs = cardsContainer.querySelectorAll(".card");
 
-  const heightRatio = 562.406 / 953; // ≈ 59% size
+  let heightRatio = 562.406 / 953; // ≈ 59% size
   // const aspectRatio = 415.91 / 557.685;
-  const aspectRatio = 395.91 / 557.685;
+  let aspectRatio = 395.91 / 557.685;
+  let cardScale = 1;
 
-  const totalScrollHeight = window.innerHeight * 3;
-  const positions = [-7, 16, 38.67, 61.33, 84, 107];
-  // const rotations = [-22.5, -15, -7.5, 7.5, 15, 22.5];
-  const rotations = [-11.25, -7.5, -3.75, 3.75, 7.5, 11.25];
+  // Size Constraint
+  const minCardHeight = 300;
+  const maxCardHeight = 582;
+  const minCardWidth = 213;
+  const maxCardWidth = 431;
 
   function setCardSize() {
-    const h = window.innerHeight * heightRatio;
-    const w = h * aspectRatio;
+    let rawH = window.innerHeight * heightRatio * cardScale;
+
+    let h = Math.max(minCardHeight, Math.min(rawH, maxCardHeight));
+
+    let w = h * aspectRatio;
+
+    if (w > maxCardWidth) {
+      w = maxCardWidth;
+      h = w / aspectRatio;
+    } else if (w < minCardWidth) {
+      w = minCardWidth;
+      h = w / aspectRatio;
+    }
+
     cardsContainer.querySelectorAll(".card").forEach((card) => {
       card.style.height = `${h}px`;
       card.style.width = `${w}px`;
     });
   }
 
-  setCardSize();
+  mm.add("(max-width: 1700px)", () => {
+    cardScale = 0.9;
+    setCardSize();
+  });
+
+  mm.add("(max-width: 1500px)", () => {
+    cardScale = 0.8;
+    setCardSize();
+  });
+
+  mm.add("(max-width: 1350px)", () => {
+    cardScale = 0.7;
+    setCardSize();
+  });
+
+  mm.add("(min-width: 1701px)", () => {
+    cardScale = 1;
+    setCardSize();
+  });
+
   window.addEventListener("resize", setCardSize);
+  setCardSize();
+
+  const totalScrollHeight = window.innerHeight * 3;
+  const positions = [-7, 16, 38.67, 61.33, 84, 107];
+  // const rotations = [-22.5, -15, -7.5, 7.5, 15, 22.5];
+  const rotations = [-11.25, -7.5, -3.75, 3.75, 7.5, 11.25];
 
   // Pin cards section
   const pinGlobal = ScrollTrigger.create({
@@ -187,11 +228,10 @@ window.addEventListener("DOMContentLoaded", () => {
       // Duplicate for seamless loop
       cardRefs.forEach((card, i) => {
         const clone = card.cloneNode(true);
-
         clone.id = `card-${baseCount + i + 1}`;
 
         clone.style.left = `${positions[i] + groupShift - 1}%`;
-        clone.style.transform = "translate(0.047px, 0.164px)";
+        // clone.style.transform = "translate(0.047px, 0.164px)";
 
         // Reset rotation
         gsap.set(clone, { rotation: 0 });
